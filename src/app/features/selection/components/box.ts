@@ -119,14 +119,4 @@ export class BoxComponent {
   isActive = computed(() => this.store.activeBoxId() === this.boxId());
 
   optionsService = inject(OptionsService);
-
-  subtotal = computed(() => {
-    const optionsMap = this.optionsService.getOptionsMap();
-    return this.store.selections()
-      .filter(s => s.boxId <= this.boxId())
-      .reduce((acc, s) => {
-        const val = s.optionLabel ? optionsMap.get(s.optionLabel)?.value ?? 0 : 0;
-        return acc + val;
-      }, 0);
-  });
 }
