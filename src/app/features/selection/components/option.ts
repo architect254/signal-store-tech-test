@@ -3,17 +3,17 @@ import { SelectionStore } from "../store/selection.store";
 import { Option } from '../../../shared/models/selection.models'
 
 @Component({
-    selector: 'app-option',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: `
+  selector: 'app-option',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
     <div class="option" 
          [class.selected]="isSelected()" 
          [attr.data-tooltip]="option().value"
-         (click)="store.updateSelection(boxId(), option().label)">
+         (click)="store.updateSelection(boxId(), option())">
       {{ option().label }}
     </div>
   `,
-    styles: [`
+  styles: [`
     .option {
       background: white;
       border: 1px solid #ddd;
@@ -33,10 +33,10 @@ import { Option } from '../../../shared/models/selection.models'
   `]
 })
 export class OptionComponent {
-    option = input.required<Option>();
-    boxId = input.required<number>();
+  option = input.required<Option>();
+  boxId = input.required<number>();
 
-    store = inject(SelectionStore);
+  store = inject(SelectionStore);
 
-    isSelected = computed(() => this.store.getSelectionForBox(this.boxId())?.optionLabel === this.option().label);
+  isSelected = computed(() => this.store.getSelectionForBox(this.boxId())?.optionLabel === this.option().label);
 }

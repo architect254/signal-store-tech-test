@@ -1,5 +1,5 @@
 import { computed, inject } from '@angular/core';
-import { signalStore, withState, withComputed, withMethods, patchState } from '@ngrx/signals';
+import { signalStore, withState, withComputed, withMethods, patchState, withHooks } from '@ngrx/signals';
 import { OptionsService } from '../../../core/services/options';
 import { BoxSelection, Option } from '../../../shared/models/selection.models';
 
@@ -31,6 +31,12 @@ export const SelectionStore = signalStore(
     }),
 
     withMethods((store) => ({
+        initializeDefaultState() {
+            const saved = localStorage.getItem('gym-data');
+            if (!saved || JSON.parse(saved).length === 0) {
+                this.reset();
+            }
+        },
         getSelectionForBox(id: number) {
             return store.selections().find(s => s.boxId === id);
         },
@@ -39,26 +45,15 @@ export const SelectionStore = signalStore(
             patchState(store, { activeBoxId: id });
         },
 
-        updateSelection(boxId: number, label: string): void {
+        updateSelection(boxId: number, option: Option): void {
             const updated = store.selections().map(s =>
-                s.boxId === boxId ? { ...s, optionLabel: label } : s
+                s.boxId === boxId ? { ...s, optionLabel: option.label, optionValue: option.value } : s
             );
 
             patchState(store, { selections: updated });
             localStorage.setItem('gym-data', JSON.stringify(updated));
 
             if (boxId < 10) patchState(store, { activeBoxId: boxId + 1 });
-        },
-
-        getBoxSubtotal(boxId: number, optionsMap: Map<string, Option>) {
-            return computed(() => {
-                return store.selections()
-                    .filter(s => s.boxId <= boxId)
-                    .reduce((acc, s) => {
-                        const val = s.optionLabel ? optionsMap.get(s.optionLabel)?.value ?? 0 : 0;
-                        return acc + val;
-                    }, 0);
-            });
         },
 
         reset(): void {
@@ -69,5 +64,10 @@ export const SelectionStore = signalStore(
             patchState(store, { selections: empty, activeBoxId: null });
             localStorage.setItem('gym-data', JSON.stringify(empty));
         }
-    }))
+    })),
+    withHooks({
+        onInit(store) {
+            store.initializeDefaultState();
+        },
+    })
 );

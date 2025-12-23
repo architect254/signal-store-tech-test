@@ -4,10 +4,10 @@ import { OptionsService } from "../../../core/services/options";
 import { DecimalPipe } from "@angular/common";
 
 @Component({
-    selector: 'app-box',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [DecimalPipe],
-    template: `
+  selector: 'app-box',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [DecimalPipe],
+  template: `
     <div class="box" [class.active]="isActive()" (click)="store.setActiveBox(boxId())">
       <div class="box-id-wrapper"> 
         <span class="box-id">{{ boxId() }}</span>
@@ -27,14 +27,14 @@ import { DecimalPipe } from "@angular/common";
         <span class="box-segment"></span>
         <span class="box-segment">
           @if (selection()?.optionLabel) {
-            {{ subtotal() | number:'1.1-1' }}
+            {{ selection()?.optionValue | number:'1.1-1' }}
           }
         </span>
         <span class="box-segment"></span>
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .box {
       border: 1px solid rgba(255, 255, 255, 0.507);
       height: 174px;
@@ -110,23 +110,23 @@ import { DecimalPipe } from "@angular/common";
   `]
 })
 export class BoxComponent {
-    boxId = input.required<number>();
+  boxId = input.required<number>();
 
-    store = inject(SelectionStore);
+  store = inject(SelectionStore);
 
-    selection = computed(() => this.store.getSelectionForBox(this.boxId()));
+  selection = computed(() => this.store.getSelectionForBox(this.boxId()));
 
-    isActive = computed(() => this.store.activeBoxId() === this.boxId());
+  isActive = computed(() => this.store.activeBoxId() === this.boxId());
 
-    optionsService = inject(OptionsService);
+  optionsService = inject(OptionsService);
 
-    subtotal = computed(() => {
-        const optionsMap = this.optionsService.getOptionsMap();
-        return this.store.selections()
-            .filter(s => s.boxId <= this.boxId())
-            .reduce((acc, s) => {
-                const val = s.optionLabel ? optionsMap.get(s.optionLabel)?.value ?? 0 : 0;
-                return acc + val;
-            }, 0);
-    });
+  subtotal = computed(() => {
+    const optionsMap = this.optionsService.getOptionsMap();
+    return this.store.selections()
+      .filter(s => s.boxId <= this.boxId())
+      .reduce((acc, s) => {
+        const val = s.optionLabel ? optionsMap.get(s.optionLabel)?.value ?? 0 : 0;
+        return acc + val;
+      }, 0);
+  });
 }
