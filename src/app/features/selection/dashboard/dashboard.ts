@@ -1,12 +1,12 @@
 import { DecimalPipe } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { BoxComponent } from "../components/box";
 import { OptionSelectorComponent } from "../components/option-selector";
 import { SelectionStore } from "../store/selection.store";
 
 @Component({
   selector: 'app-dashboard',
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [BoxComponent, OptionSelectorComponent, DecimalPipe],
   template: `
     <div class="dashboard">

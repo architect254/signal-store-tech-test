@@ -36,17 +36,18 @@ import { DecimalPipe } from "@angular/common";
   `,
   styles: [`
     .box {
-      border: 1px solid rgba(255, 255, 255, 0.507);
+      border: 1px solid #ddd;
       height: 174px;
-      padding: 0 12px;
+      padding: 0; 
       cursor: pointer;
       position: relative;
-      background-color: white; 
+      background-color: white;
+      overflow: hidden;
     }
 
-    .box:hover { background-color: #eee; }
+    .box:hover { background-color: #f9f9f9; }
 
-    .box.active { background-color: rgba(172, 255, 47, 0.349); }
+    .box.active { background-color: rgba(172, 255, 47, 0.3); }
 
     .box-id-wrapper {
       position: absolute;
@@ -55,34 +56,43 @@ import { DecimalPipe } from "@angular/common";
       background-color: #eee;
       width: 100%;
       height: 24px;
+      z-index: 1;
     }
 
-    .box.active .box-id-wrapper { background-color: rgba(172, 255, 47, 0.349); }
+    .box.active .box-id-wrapper { background-color: rgba(172, 255, 47, 0.5); }
 
     .box-id {
       position: absolute;
       top: 0px;
       left: 0;
-      padding: 0 4px;
+      padding: 0 6px;
       background: white;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
     }
 
     .selected-option {
-      font-size: 74px;
+      /* Fluid typography: Min 40px, Scales with width, Max 74px */
+      font-size: clamp(40px, 6vw, 74px); 
       position: absolute;
-      top: 10%;
-      left: 8%;
-      font-weight: bold;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%); 
+      font-weight: 800;
+      color: #2c3e50;
     }
 
     .placeholder {
-      position: relative;
-      top: 40%;
-      color: #999;
-      font-size: 14px;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-50%);
+      color: #bdc3c7;
+      font-size: 0.8rem;
       text-align: center;
+      text-transform: uppercase;
+      padding: 0 5px;
     }
 
     .bottom-wrapper {
@@ -91,32 +101,30 @@ import { DecimalPipe } from "@angular/common";
       left: 0;
       width: 100%;
       display: flex;
-      justify-content: space-evenly;
       gap: 1px;
     }
 
     .box-segment {
       height: 24px;
       background-color: #eee;
-      width: 100%;
+      flex: 1; 
       text-align: center;
       line-height: 24px; 
-      font-size: 12px;
+      font-size: 11px;
+      color: #7f8c8d;
     }
 
     .box.active .box-segment {
-      background-color: rgba(172, 255, 47, 0.349);
+      background-color: rgba(172, 255, 47, 0.5);
+      color: #2c3e50;
     }
   `]
 })
 export class BoxComponent {
   boxId = input.required<number>();
-
   store = inject(SelectionStore);
+  optionsService = inject(OptionsService);
 
   selection = computed(() => this.store.getSelectionForBox(this.boxId()));
-
   isActive = computed(() => this.store.activeBoxId() === this.boxId());
-
-  optionsService = inject(OptionsService);
 }
